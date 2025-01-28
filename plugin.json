@@ -1,0 +1,316 @@
+{
+    "uuid": "7e35d737-64b3-4055-bfbf-9dabc1b52252",
+    "id": "create_notion_database",
+    "emoji": "🧩",
+    "title": "Notion Database Maker",
+    "overviewMarkdown": "# **Notion Database Maker**\nThis plugin allows users to create a Notion database with detailed properties and settings.\n\n### 📝 **User Setting Notes:**\n#### 🔧 **Set Up the Plugin Server:**\n- A plugin server must be set up to use this feature. Follow the detailed guide to set up a plugin server on Render: [How to Deploy the Plugin Server on Render](https://docs.typingmind.com/plugins/plugins-server/how-to-deploy-plugins-server-on-render)\n\n#### 🔑 **Set Up Your Notion API Key:**\n- Go to the [Notion Integration Page](https://www.notion.so/profile/integrations) and create a new integration.\n- Copy the key from the Integration Detail Page.\n- Paste the key into the plugin's user settings:\n  **Notion API Key:** `ntn_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`\n\nFor detailed instructions, visit the [Notion Integration API Documentation](https://developers.notion.com/docs/create-a-notion-integration)\n\n#### 🔗 **Share Your Database with the Integration:**\n- Open your database in Notion.\n- Click the **“Share”** button in the top right.\n- Select **“Invite”**, search for your integration name, and click **“Invite”** to grant access.\n\nFor detailed instructions, visit the [Notion API Connections Documentation](https://www.notion.com/help/add-and-manage-connections-with-the-api)\n\n### 📌 **Important Notes:**\n\n#### ⚠️ **Limitations:**\n- The plugin does **not support** the following property types: Relation, Rollup, Verification, and Unique ID.\n- The order of properties is not preserved based on user input, and you will need to manually drag-and-drop the properties to adjust their order.\n\n#### 👉 **Rate Limits:**\n- There are rate limits for Notion API requests. Learn more at [Notion API Rate Limits](https://developers.notion.com/reference/request-limits#rate-limits).\n- There are size limits on certain parameters, as well as the depth of children in requests. Learn more at [Notion API Size Limits](https://developers.notion.com/reference/request-limits#size-limits)\n\n\n### 💡 **Example Usage**  \n> Create a Database for Employee Directory on Notion.\n>\n> Database Name: TypingMind Employee Directory\n>\n> Parent Page: https://www.notion.so/TypingMind-Integration-12345bcxyz\n>\n> Description: The TypingMind Employee Directory is a simple tool to quickly find and connect with colleagues. It lets you search and filter employees by role, department, and more.\n>\n> Page Icon: 📇\n>\n> Cover Image: https://t4.ftcdn.net/jpg/09/77/83/07/240_F_977830794_XM1TKUBF0rO6bnOHZTGWASrr73Yt8Lng.jpg\n>\n> Database Structure:\n> 1. Name (Title)\n> 2. Years of Experience (Number)\n> 3. Skills (Multi-select) - Options: Project Management, Programming, Data Analysis, Communication, Leadership, Design, Marketing, Sales, MLOps, FullStack\n> 4. Probation Passed (Checkbox)\n> 5. Location (Select) - Options: HQ - New York, Office - London, Office - Singapore, Remote - Domestic, Remote - International, Hybrid, Office - New York\n> 6. Role (Select) - Options: Engineer, Manager, Designer, Analyst, Developer, Director, Coordinator, Specialist\n> 7. LinkedIn Profile (URL)\n> 8. Performance Review Status (Status) - Options: Not started, In progress, Done\n> 9. Email (Email)\n> 10. Start Date (Date)\n> 11. Department (Select) - Options: Engineering, Marketing, Sales, HR, Finance, Operations, Customer Support, Design\n> 12. Attachments (Files)\n> 13. Phone (Phone Number)\n> 14. Notes (Rich Text)\n> 15. Title by Years of Experience: Formula: If Years of Experience == 0, then \"Fresher\"; if 1 <= Years of Experience < 3, then \"Junior\"; otherwise, \"Senior\".",
+    "openaiSpec": {
+        "name": "create_notion_database",
+        "description": "Creates a database in Notion with detailed properties and settings.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "parent": {
+                    "type": "object",
+                    "description": "Defines the parent where the database will be created.",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "page_id",
+                                "database_id"
+                            ],
+                            "description": "The type of the parent object. Supports 'page_id' (for databases created under a specific page) and 'database_id' (if it is nested under another database)."
+                        },
+                        "pageId": {
+                            "type": "string",
+                            "description": "The unique identifier of the parent page in Notion. Either `page_id` or `database_id` must be provided."
+                        },
+                        "databaseId": {
+                            "type": "string",
+                            "description": "The unique identifier of the parent database in Notion. Either `page_id` or `database_id` must be provided."
+                        }
+                    },
+                    "required": [
+                        "type"
+                    ]
+                },
+                "icon": {
+                    "type": "string",
+                    "description": "The icon of the database can currently only be an emoji, which must be specified."
+                },
+                "cover": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Defines the cover image for the database, which can only use an external URL."
+                },
+                "isInline": {
+                    "type": "boolean",
+                    "description": "Specifies whether the database is created inline. The default value is false."
+                },
+                "title": {
+                    "type": "array",
+                    "description": "Defines the title of the page. Following rich_text property schema definition.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "const": "text",
+                                "description": "Type of the content, should always be 'text'."
+                            },
+                            "text": {
+                                "type": "object",
+                                "properties": {
+                                    "content": {
+                                        "type": "string",
+                                        "description": "The content of the text block."
+                                    }
+                                },
+                                "required": [
+                                    "content"
+                                ]
+                            },
+                            "annotations": {
+                                "type": "object",
+                                "properties": {
+                                    "italic": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Indicates if the text is italicized. Default is false."
+                                    },
+                                    "bold": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Indicates if the text is bolded. Default is false."
+                                    },
+                                    "color": {
+                                        "type": "string",
+                                        "default": "default",
+                                        "description": "The color of the text. Default is 'default'."
+                                    },
+                                    "strikethrough": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Indicates if the text has a strikethrough. Default is false."
+                                    },
+                                    "underline": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Indicates if the text is underlined. Default is false."
+                                    }
+                                },
+                                "default": {
+                                    "italic": false,
+                                    "bold": false,
+                                    "color": "default",
+                                    "strikethrough": false,
+                                    "underline": false
+                                }
+                            }
+                        },
+                        "required": [
+                            "type",
+                            "text"
+                        ]
+                    }
+                },
+                "description": {
+                    "type": "array",
+                    "description": "Defines the description of the page. Following rich_text property schema definition.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "const": "text",
+                                "description": "Type of the content, should always be 'text'."
+                            },
+                            "text": {
+                                "type": "object",
+                                "properties": {
+                                    "content": {
+                                        "type": "string",
+                                        "description": "The content of the text block."
+                                    }
+                                },
+                                "required": [
+                                    "content"
+                                ]
+                            },
+                            "annotations": {
+                                "type": "object",
+                                "properties": {
+                                    "italic": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Indicates if the text is italicized. Default is false."
+                                    },
+                                    "bold": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Indicates if the text is bolded. Default is false."
+                                    },
+                                    "color": {
+                                        "type": "string",
+                                        "default": "default",
+                                        "description": "The color of the text. Default is 'default'."
+                                    },
+                                    "strikethrough": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Indicates if the text has a strikethrough. Default is false."
+                                    },
+                                    "underline": {
+                                        "type": "boolean",
+                                        "default": false,
+                                        "description": "Indicates if the text is underlined. Default is false."
+                                    }
+                                },
+                                "default": {
+                                    "italic": false,
+                                    "bold": false,
+                                    "color": "default",
+                                    "strikethrough": false,
+                                    "underline": false
+                                }
+                            }
+                        },
+                        "required": [
+                            "type",
+                            "text"
+                        ]
+                    }
+                },
+                "notionProperties": {
+                    "type": "array",
+                    "description": "An array of property objects to define the page's properties following Notion's property schema. This field is required when operation is 'create' or 'update'. Otherwise, it should be an empty array.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "propertyName": {
+                                "type": "string",
+                                "description": "The name of the property."
+                            },
+                            "propertyType": {
+                                "type": "string",
+                                "description": "The type of the property (title, rich_text, number, select, status, multi_select, date, url, email, phone_number, checkbox, files, formula)."
+                            },
+                            "options": {
+                                "type": "array",
+                                "description": "The available options for select or multi_select properties.",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "description": "The option name."
+                                        },
+                                        "color": {
+                                            "type": "string",
+                                            "enum": [
+                                                "default",
+                                                "gray",
+                                                "brown",
+                                                "orange",
+                                                "yellow",
+                                                "green",
+                                                "blue",
+                                                "purple",
+                                                "pink",
+                                                "red"
+                                            ],
+                                            "description": "The color of the option.  If not specified, randomly assign colors to the options from the supported Notion colors."
+                                        }
+                                    },
+                                    "required": [
+                                        "name"
+                                    ]
+                                }
+                            },
+                            "format": {
+                                "type": "string",
+                                "enum": [
+                                    "number",
+                                    "number_with_commas",
+                                    "percent",
+                                    "dollar",
+                                    "australian_dollar",
+                                    "canadian_dollar",
+                                    "singapore_dollar",
+                                    "euro",
+                                    "pound",
+                                    "yen",
+                                    "ruble",
+                                    "rupee",
+                                    "won",
+                                    "yuan",
+                                    "real",
+                                    "lira",
+                                    "rupiah",
+                                    "franc",
+                                    "hong_kong_dollar",
+                                    "new_zealand_dollar",
+                                    "krona",
+                                    "norwegian_krone",
+                                    "mexican_peso",
+                                    "rand",
+                                    "new_taiwan_dollar",
+                                    "danish_krone",
+                                    "zloty",
+                                    "baht",
+                                    "forint",
+                                    "koruna",
+                                    "shekel",
+                                    "chilean_peso",
+                                    "philippine_peso",
+                                    "dirham",
+                                    "colombian_peso",
+                                    "riyal",
+                                    "ringgit",
+                                    "leu",
+                                    "argentine_peso",
+                                    "uruguayan_peso",
+                                    "peruvian_sol"
+                                ],
+                                "description": "The format for the number property (if applicable)."
+                            },
+                            "formula": {
+                                "type": "string",
+                                "description": "The formula for a Notion formula-based property."
+                            },
+                            "dateFormat": {
+                                "type": "string",
+                                "description": "The date format for date properties, typically 'YYYY-MM-DD'."
+                            }
+                        }
+                    }
+                }
+            },
+            "required": [
+                "parent",
+                "notionProperties"
+            ]
+        }
+    },
+    "userSettings": [
+        {
+            "name": "pluginServer",
+            "label": "Plugin Server",
+            "required": true,
+            "description": "The URL of the plugin server. For more details, refer to the documentation: https://docs.typingmind.com/plugins/plugins-server",
+            "placeholder": "https://...."
+        },
+        {
+            "name": "notionApiKey",
+            "label": "Notion API Key",
+            "description": "Enter your Notion Secret Key. You can create an integration from Notion at https://www.notion.so/profile/integrations",
+            "required": true
+        }
+    ],
+    "iconURL": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/notion.png",
+    "authenticationType": "AUTH_TYPE_NONE",
+    "implementationType": "javascript",
+    "oauthConfig": null,
+    "outputType": "respond_to_ai"
+}
