@@ -5,11 +5,21 @@
  * @param {string} [params.icon] - The emoji icon of the page.
  * @param {string} [params.cover] - The cover image of the page.
  * @param {string} [params.title] - Defines the title of the page. Following rich_text property schema definition.
+ * @param {string} [params.description] - Defines the description of the page. Following rich_text property schema definition.
+ * @param {string} [params.isInline] - Specifies whether the database is created inline. The default value is false.
  * @param {Object} [params.notionProperties] - The property definitions for create a database in Notion.
  * @returns {Promise<Object>} - The response data from the Notion API.
  */
 async function create_notion_database(params, userSettings) {
-  const { parent, icon, cover, title, notionProperties = [] } = params;
+  const {
+    parent,
+    icon,
+    cover,
+    title,
+    description,
+    isInline = false,
+    notionProperties = [],
+  } = params;
   const { pluginServer, notionApiKey } = userSettings;
 
   if (!pluginServer) {
@@ -30,34 +40,71 @@ async function create_notion_database(params, userSettings) {
     );
   }
 
+  if (parent && parent.type === "database_id" && !parent.databaseId) {
+    throw new Error(
+      "Missing the Database Id. Please provide specific Database ID or Database URL"
+    );
+  }
+
   try {
-    // Prepare the request payload to create the Notion database
-    const payload = {
-      parent: {
-        type: parent.type,
-        page_id: parent.pageId || undefined, // pageId is required if type is "page_id"
-      },
+    const result = await createDatabase({
+      notionApiKey: notionApiKey,
+      pluginServerUrl: pluginServer,
+      parent: parent,
       icon: icon,
       cover: cover,
       title: title,
-      notionProperties: notionProperties ?? [],
-    };
+      description: description,
+      isInline: isInline,
+      notionProperties: notionProperties,
+    });
+    return result;
+  } catch (error) {
+    return { error: error.message };
+  }
+}
 
-    // Make API request to create the database
-    const response = await axios.post(
-      `${pluginServer}/api/v1/notion/databases`,
-      payload,
+async function createDatabase({
+  notionApiKey,
+  pluginServerUrl,
+  parent,
+  icon,
+  cover,
+  title,
+  description,
+  isInline,
+  notionProperties = [],
+}) {
+  const requestBody = {
+    notionApiKey: notionApiKey,
+    parent: parent,
+    icon: icon,
+    cover: cover,
+    title: title,
+    description: description,
+    isInline: isInline,
+    notionProperties: notionProperties,
+  };
+
+  try {
+    const response = await fetch(
+      `${pluginServerUrl}/notion-database/create-database`,
       {
+        method: "POST",
         headers: {
-          Authorization: `Bearer ${notionApiKey}`,
           "Content-Type": "application/json",
         },
+        body: JSON.stringify(requestBody),
       }
     );
+
+    if (!response.ok) {
+      throw new Error(`Error create database: ${response.statusText}`);
+    }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    return { error: error.message };
+    throw new Error(`Failed to create database: ${error.message}`);
   }
 }
