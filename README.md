@@ -32,31 +32,26 @@ For detailed instructions, visit the [Notion API Connections Documentation](http
 
 
 ### 💡 **Example Usage**  
-> Create a Database for Employee Directory on Notion.
+> Create an Inline Database named “TypingMind Employee Directory” under my Notion Page URL https://www.notion.so/TypingMind-18a6a66d6ac98006ad95f8f7d8130dad
 >
-> Database Name: TypingMind Employee Directory
->
-> Parent Page: https://www.notion.so/TypingMind-Integration-12345bcxyz
->
-> Description: The TypingMind Employee Directory is a simple tool to quickly find and connect with colleagues. It lets you search and filter employees by role, department, and more.
->
-> Page Icon: 📇
->
+> Description: The TypingMind Employee Directory is a simple tool to quickly find and connect with colleagues. It lets you search and filter employees by role, 
+department, and more.
+> Icon: 📇
 > Cover Image: https://t4.ftcdn.net/jpg/09/77/83/07/240_F_977830794_XM1TKUBF0rO6bnOHZTGWASrr73Yt8Lng.jpg
 >
 > Database Structure:
 > 1. Name (Title)
-> 2. Years of Experience (Number)
-> 3. Skills (Multi-select) - Options: Project Management, Programming, Data Analysis, Communication, Leadership, Design, Marketing, Sales, MLOps, FullStack
-> 4. Probation Passed (Checkbox)
-> 5. Location (Select) - Options: HQ - New York, Office - London, Office - Singapore, Remote - Domestic, Remote - International, Hybrid, Office - New York
-> 6. Role (Select) - Options: Engineer, Manager, Designer, Analyst, Developer, Director, Coordinator, Specialist
-> 7. LinkedIn Profile (URL)
-> 8. Performance Review Status (Status) - Options: Not started, In progress, Done
-> 9. Email (Email)
-> 10. Start Date (Date)
-> 11. Department (Select) - Options: Engineering, Marketing, Sales, HR, Finance, Operations, Customer Support, Design
-> 12. Attachments (Files)
-> 13. Phone (Phone Number)
-> 14. Notes (Rich Text)
-> 15. Title by Years of Experience: Formula: If Years of Experience == 0, then "Fresher"; if 1 <= Years of Experience < 3, then "Junior"; otherwise, "Senior".
+> 2. Attachments (Files)
+> 3. Department (Select) - Options: Engineering, Marketing, Sales, HR, Finance, Operations, Customer Support, Design
+> 4. Email (Email)
+> 5. LinkedIn Profile (URL)
+> 6. Location (Select) - Options: HQ - New York, Office - London, Office - Singapore, Remote - Domestic, Remote - International, Hybrid, Office - New York
+> 7. Notes (Rich Text)
+> 8. Performance Review Status (Status) - Options: Not started, In progress, Done
+> 9. Phone (Phone Number)
+> 10. Probation Passed (Checkbox)
+> 11. Role (Select) - Options: Engineer, Manager, Designer, Analyst, Developer, Director, Coordinator, Specialist
+> 12. Skills (Multi-select) - Options: Project Management, Programming, Data Analysis, Communication, Leadership, Design, Marketing, Sales, MLOps, FullStack
+> 13. Start Date (Date)
+> 14. Title by Years of Experience: If Years of Experience = 0, then "Fresher"; if Years of Experience >= 1 and Years of Experience < 3, then "Junior"; otherwise, "Senior".
+> 15. Years of Experience (Number)
