@@ -30,18 +30,7 @@ async function create_notion_database(params, userSettings) {
     );
   }
 
-  if (!notionProperties.length) {
-    throw new Error(
-      "Missing the Database Properties. Please provide valid structure of your provided database."
-    );
-  }
-
   try {
-    // Build the column schema for the database based on the provided notion properties
-    const databaseProperties = notionProperties.map((property) =>
-      buildColumnSchema(property)
-    );
-
     // Prepare the request payload to create the Notion database
     const payload = {
       parent: {
@@ -51,9 +40,7 @@ async function create_notion_database(params, userSettings) {
       icon: icon,
       cover: cover,
       title: title,
-      properties: databaseProperties.reduce((acc, schema) => {
-        return { ...acc, ...schema.properties };
-      }, {}),
+      notionProperties: notionProperties ?? [],
     };
 
     // Make API request to create the database
