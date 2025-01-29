@@ -40,12 +40,6 @@ async function create_notion_database(params, userSettings) {
     );
   }
 
-  if (parent && parent.type === "database_id" && !parent.databaseId) {
-    throw new Error(
-      "Missing the Database Id. Please provide specific Database ID or Database URL"
-    );
-  }
-
   try {
     const result = await createDatabase({
       notionApiKey: notionApiKey,

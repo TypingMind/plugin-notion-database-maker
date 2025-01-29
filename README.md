@@ -53,5 +53,8 @@ department, and more.
 > 11. Role (Select) - Options: Engineer, Manager, Designer, Analyst, Developer, Director, Coordinator, Specialist
 > 12. Skills (Multi-select) - Options: Project Management, Programming, Data Analysis, Communication, Leadership, Design, Marketing, Sales, MLOps, FullStack
 > 13. Start Date (Date)
-> 14. Title by Years of Experience: If Years of Experience = 0, then "Fresher"; if Years of Experience >= 1 and Years of Experience < 3, then "Junior"; otherwise, "Senior".
+> 14. Title by Years of Experience: Calculate the "Title by Years of Experience" based on the following conditions using a Notion formula:
+> - If "Years of Experience" is exactly 0, the title should be "Fresher."
+> - If "Years of Experience" is less than 3 but not 0, the title should be "Junior."
+> - If "Years of Experience" is 3 or more, the title should be "Senior."
 > 15. Years of Experience (Number)
