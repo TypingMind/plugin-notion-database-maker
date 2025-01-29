@@ -9,7 +9,7 @@
  * @returns {Promise<Object>} - The response data from the Notion API.
  */
 async function create_notion_database(params, userSettings) {
-  const { parent, iqcon, cover, title, notionProperties = [] } = params;
+  const { parent, icon, cover, title, notionProperties = [] } = params;
   const { pluginServer, notionApiKey } = userSettings;
 
   if (!pluginServer) {
@@ -48,9 +48,9 @@ async function create_notion_database(params, userSettings) {
         type: parent.type,
         page_id: parent.pageId || undefined, // pageId is required if type is "page_id"
       },
-      // icon: { type: "emoji", emoji: icon },
-      // cover: { type: "external", external: { url: cover } },
-      // title: [{ type: "text", text: { content: title } }],
+      icon: icon,
+      cover: cover,
+      title: title,
       properties: databaseProperties.reduce((acc, schema) => {
         return { ...acc, ...schema.properties };
       }, {}),
@@ -69,7 +69,7 @@ async function create_notion_database(params, userSettings) {
     );
 
     const data = await response.json();
-    return data;    
+    return data;
   } catch (error) {
     return { error: error.message };
   }
@@ -86,7 +86,7 @@ function buildColumnSchema({
   const schema = {
     properties: {},
   };
-  
+
   // Define properties based on the column type
   switch (columnType) {
     case "title":
